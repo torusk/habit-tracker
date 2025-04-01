@@ -6,7 +6,7 @@ import {
 } from "../utils/habitStorage";
 
 // 固定の習慣リスト
-const FIXED_HABITS = ["瞑想", "読書"];
+const FIXED_HABITS = ["瞑想", "学習", "運動"];
 
 const TodayCheckList = () => {
   const today = formatDate(new Date());

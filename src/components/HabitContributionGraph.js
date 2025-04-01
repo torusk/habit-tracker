@@ -13,7 +13,7 @@ import { ja } from "date-fns/locale";
 import { getDayRecord, formatDate } from "../utils/habitStorage";
 
 // 固定の習慣リスト
-const FIXED_HABITS = ["瞑想", "読書"];
+const FIXED_HABITS = ["瞑想", "学習", "運動"];
 
 const HabitContributionGraph = () => {
   const [yearData, setYearData] = useState([]);
@@ -76,13 +76,27 @@ const HabitContributionGraph = () => {
 
     // 固定習慣のうち、完了したものをカウント
     const meditationCompleted = dayRecord.completedHabits && dayRecord.completedHabits["瞑想"];
-    const readingCompleted = dayRecord.completedHabits && dayRecord.completedHabits["読書"];
+    const learningCompleted = dayRecord.completedHabits && dayRecord.completedHabits["学習"];
+    const exerciseCompleted = dayRecord.completedHabits && dayRecord.completedHabits["運動"];
+    
+    // 完了した数をカウント
+    const completedCount = [meditationCompleted, learningCompleted, exerciseCompleted].filter(Boolean).length;
 
-    // 完了状況に応じて色を返す
-    if (meditationCompleted && readingCompleted) return "#ffd700"; // 両方完了：金色
-    if (meditationCompleted) return "#9966cc"; // 瞑想のみ：紫色
-    if (readingCompleted) return "#90ee90"; // 読書のみ：黄緑
-    return "#ebedf0"; // 何も完了していない：灰色
+    // 3つすべて完了
+    if (completedCount === 3) return "#ffd700"; // 金色
+    
+    // 2つ完了
+    if (meditationCompleted && learningCompleted) return "#0055cc"; // 瞑想 + 学習 = 濃い青
+    if (meditationCompleted && exerciseCompleted) return "#cc0000"; // 瞑想 + 運動 = 濃い赤
+    if (learningCompleted && exerciseCompleted) return "#006600"; // 学習 + 運動 = 濃い緑
+    
+    // 1つのみ完了
+    if (meditationCompleted) return "#cbb3f0"; // 瞑想：薄紫色
+    if (learningCompleted) return "#99bbee"; // 学習：薄青色
+    if (exerciseCompleted) return "#a3d6a3"; // 運動：薄緑色
+    
+    // 何も完了していない
+    return "#ebedf0"; // 灰色
   };
   
   // 現在の日付から1年前の日付を計算
@@ -155,7 +169,8 @@ const HabitContributionGraph = () => {
                   title={`${day.date}: ${
                     getDayRecord(day.date) && getDayRecord(day.date).completedHabits
                       ? (getDayRecord(day.date).completedHabits["瞑想"] ? "瞑想 " : "") + 
-                        (getDayRecord(day.date).completedHabits["読書"] ? "読書" : "")
+                        (getDayRecord(day.date).completedHabits["学習"] ? "学習 " : "") +
+                        (getDayRecord(day.date).completedHabits["運動"] ? "運動" : "")
                       : "なし"
                   }`}
                 >
@@ -169,23 +184,34 @@ const HabitContributionGraph = () => {
 
       {/* 凡例 */}
       <div className="contribution-legend">
-        <span>レベル:</span>
-        <span>なし</span>
         <div
           className="legend-cell"
           style={{ backgroundColor: "#ebedf0" }}
         ></div>
-        <span>瞑想</span>
         <div
           className="legend-cell"
-          style={{ backgroundColor: "#9966cc" }}
+          style={{ backgroundColor: "#cbb3f0" }}
         ></div>
-        <span>読書</span>
         <div
           className="legend-cell"
-          style={{ backgroundColor: "#90ee90" }}
+          style={{ backgroundColor: "#99bbee" }}
         ></div>
-        <span>両方</span>
+        <div
+          className="legend-cell"
+          style={{ backgroundColor: "#a3d6a3" }}
+        ></div>
+        <div
+          className="legend-cell"
+          style={{ backgroundColor: "#0055cc" }}
+        ></div>
+        <div
+          className="legend-cell"
+          style={{ backgroundColor: "#cc0000" }}
+        ></div>
+        <div
+          className="legend-cell"
+          style={{ backgroundColor: "#006600" }}
+        ></div>
         <div
           className="legend-cell"
           style={{ backgroundColor: "#ffd700" }}
