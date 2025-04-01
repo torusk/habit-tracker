@@ -3,6 +3,20 @@
 @tailwind components;
 @tailwind utilities;
 
+.checklist-tips {
+  font-size: 0.8rem;
+  color: #586069;
+  text-align: center;
+  margin-top: 15px;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .checklist-tips {
+    display: block;
+  }
+}
+
 /* 基本的なCSSスタイル */
 body {
   margin: 0;
@@ -139,6 +153,8 @@ code {
 .contribution-container {
   display: flex;
   margin-bottom: 16px;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .weekday-header {
@@ -162,9 +178,11 @@ code {
 
 .contribution-cells.year-view {
   display: grid;
-  grid-template-columns: repeat(53, 10px);
-  grid-template-rows: repeat(7, 10px);
+  grid-template-columns: repeat(53, minmax(0, 10px));
+  grid-template-rows: repeat(7, minmax(0, 10px));
   gap: 2px;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .contribution-cells.year-view .contribution-cell {
@@ -197,10 +215,12 @@ code {
 .contribution-legend {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   font-size: 11px;
   color: #586069;
   gap: 6px;
+  flex-wrap: wrap;
+  padding: 5px 0;
 }
 
 .legend-cell {
@@ -264,14 +284,98 @@ code {
 }
 
 /* レスポンシブ対応 */
+/* タブレット向け */
+@media (min-width: 481px) and (max-width: 768px) {
+  .app-main {
+    padding: 0.75rem;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .contribution-graph {
+    padding: 10px;
+    width: calc(100% - 20px);
+  }
+  
+  .today-checklist {
+    padding: 12px;
+  }
+
+  .contribution-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .year-title {
+    font-size: 1rem;
+  }
+
+  .nav-button {
+    padding: 3px 8px;
+    font-size: 12px;
+  }
+  
+  .contribution-container {
+    overflow-x: visible;
+  }
+  
+  .day-labels {
+    font-size: 9px;
+    gap: 28px;
+  }
+
+  .month-labels {
+    font-size: 9px;
+    margin-bottom: 6px;
+  }
+  
+  .contribution-cell,
+  .contribution-cells.year-view .contribution-cell {
+    width: 7px;
+    height: 7px;
+  }
+  
+  .graph-area {
+    width: calc(100% - 20px);
+    overflow-x: hidden;
+  }
+  
+  .contribution-cells.year-view {
+    grid-template-columns: repeat(53, minmax(0, 7px));
+    grid-template-rows: repeat(7, minmax(0, 7px));
+    gap: 1px;
+    overflow-x: visible;
+  }
+  
+  .legend-cell {
+    width: 7px;
+    height: 7px;
+  }
+  
+  .contribution-legend {
+    gap: 5px;
+    justify-content: center;
+    padding-top: 5px;
+  }
+}
+
+/* スマートフォン向け */
 @media (max-width: 480px) {
   .app-main {
     padding: 0.5rem;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
-  .contribution-graph,
+  .contribution-graph {
+    padding: 8px;
+    width: calc(100% - 16px);
+  }
+  
   .today-checklist {
     padding: 10px;
+    margin-top: 5px;
   }
 
   .contribution-header {
@@ -291,34 +395,94 @@ code {
 
   .contribution-cell,
   .contribution-cells.year-view .contribution-cell {
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
+  }
+  
+  .graph-area {
+    width: calc(100% - 15px);
+    overflow-x: hidden;
   }
 
   .contribution-cells.year-view {
-    grid-template-columns: repeat(53, 6px);
-    grid-template-rows: repeat(7, 6px);
+    grid-template-columns: repeat(53, minmax(0, 4px));
+    grid-template-rows: repeat(7, minmax(0, 4px));
     gap: 1px;
+    overflow-x: visible;
   }
   
   .day-labels {
-    gap: 25px;
-    padding-top: 6px;
+    gap: 12px;
+    padding-top: 3px;
+    font-size: 7px;
   }
   
   .month-labels {
-    font-size: 8px;
-    margin-bottom: 6px;
+    font-size: 6px;
+    margin-bottom: 3px;
   }
 
   .legend-cell {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
 
   .contribution-legend {
-    font-size: 9px;
+    font-size: 8px;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: center;
+    gap: 3px;
+    margin-top: 10px;
+  }
+  
+  .habit-items {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .habit-checkbox {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+  
+  .habit-name {
+    font-size: 16px;
+  }
+}
+
+/* iPadやタブレット向けの横向きモード */
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+  .app-main {
+    max-width: 95%;
+    overflow-x: hidden;
+  }
+  
+  .contribution-graph {
+    width: calc(100% - 24px);
+  }
+  
+  .contribution-cell,
+  .contribution-cells.year-view .contribution-cell {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .graph-area {
+    width: calc(100% - 20px);
+    overflow-x: hidden;
+  }
+  
+  .contribution-cells.year-view {
+    grid-template-columns: repeat(53, minmax(0, 8px));
+    grid-template-rows: repeat(7, minmax(0, 8px));
+    gap: 1px;
+    overflow-x: visible;
+  }
+  
+  .day-labels {
+    gap: 28px;
+    padding-top: 10px;
   }
 }

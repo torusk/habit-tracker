@@ -75,6 +75,9 @@ const TodayCheckList = () => {
           </div>
         ))}
       </div>
+      <div className="checklist-tips">
+        タップして代入し、チェックが反映されます。
+      </div>
     </div>
   );
 };
