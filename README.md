@@ -1,70 +1,107 @@
-# Getting Started with Create React App
+# 習慣トラッカー
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+GitHubの草（コントリビューショングラフ）のようなデザインの習慣トラッカーアプリケーションです。瞑想と読書の2つの習慣を毎日記録することができます。
 
-## Available Scripts
+## 機能
 
-In the project directory, you can run:
+- GitHubの草に似たカレンダービュー
+- 瞑想と読書の2つの固定習慣
+- 習慣の完了状況に応じて色が変わるカレンダーマス
+- シンプルなチェックボックスでの習慣記録
+- モバイル対応レスポンシブデザイン
+- 簡易的なアクセス制限機能
 
-### `npm start`
+## インストールと起動
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```bash
+# 依存関係のインストール
+npm install
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+# 開発サーバーの起動
+npm start
+```
 
-### `npm test`
+## プロジェクト構造
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+habit-tracker/
+├── src/
+│   ├── components/
+│   │   ├── HabitContributionGraph.js  # 草グラフのカレンダー表示
+│   │   └── TodayCheckList.js          # 今日の習慣チェックリスト
+│   │
+│   ├── utils/
+│   │   └── habitStorage.js            # データ保存ロジック
+│   │
+│   ├── App.js                         # メインアプリケーション
+│   └── index.css                      # スタイリング
+│
+└── package.json                       # 依存関係
+```
 
-### `npm run build`
+## 使い方
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. アプリを起動すると、GitHubの草に似たカレンダーと今日の習慣チェックリストが表示されます
+2. 今日の習慣を完了したら、下部のチェックボックスにチェックを入れます
+3. チェックを入れると即座にカレンダーの色が更新されます
+   - 0件完了：灰色
+   - 1件完了：薄緑
+   - 2件完了：濃緑
+4. 月の移動は上部の矢印ボタンで行えます
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## アクセス制限について
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+プライベートな習慣記録を保護するため、簡易的なアクセス制限機能を実装しています。
 
-### `npm run eject`
+- デフォルトURL：誰でもアクセス可能
+- 制限付きURL：`?key=秘密キー` パラメータ付きのURLのみアクセス可能
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+秘密キーは `App.js` 内の以下の行で変更できます：
+```javascript
+const hasAccess = !secretKey || secretKey === 'kazuki'; // 'kazuki'を任意の秘密キーに変更
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Netlifyへのデプロイ
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+1. GitHubリポジトリを作成し、コードをプッシュ
+2. Netlifyにログイン
+3. 「New site from Git」をクリック
+4. GitHubリポジトリを選択
+5. ビルド設定：
+   - Build command: `npm run build`
+   - Publish directory: `build`
+6. 「Deploy site」をクリック
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+デプロイ後、アクセス制限を有効にする場合は、以下のURLでアクセス：
+```
+https://あなたのサイト名.netlify.app/?key=あなたの秘密キー
+```
 
-## Learn More
+## データの保存について
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+全てのデータはブラウザのLocalStorageに保存されます。ブラウザのデータを消去すると記録も失われるため、定期的なバックアップをお勧めします。
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## カスタマイズ方法
 
-### Code Splitting
+- **色の変更**: `index.css` 内の色コードを変更
+- **秘密キー**: `App.js` 内の `hasAccess` 変数を変更
+- **習慣の変更**: `FIXED_HABITS` 配列を変更（`HabitContributionGraph.js` と `TodayCheckList.js` の両方）
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## プロジェクトの状況と今後の展開
 
-### Analyzing the Bundle Size
+現在、GitHubの草に似たシンプルなUIで基本的な習慣トラッキング機能が実装されています。今後、以下のような改善ができると良いでしょう：
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1. 習慣の追加・削除機能（必要に応じて）
+2. データのエクスポート・インポート機能
+3. 草の色やデザインのさらなるカスタマイズ
+4. 年間表示モードの追加
 
-### Making a Progressive Web App
+## トラブルシューティング
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- **日付が更新されない**: ページを再読み込みしてください
+- **色が変わらない**: LocalStorageが有効かを確認してください
+- **モバイルで表示が崩れる**: CSSの問題が考えられます。レスポンシブデザインの調整が必要かもしれません
 
-### Advanced Configuration
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+GitHubの草に似たシンプルなデザインの習慣トラッカーで、シンプルかつ効果的に習慣を継続するためのツールです。特に瞑想と読書という知的習慣の継続をサポートします。
