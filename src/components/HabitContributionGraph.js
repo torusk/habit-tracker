@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import {
-  addMonths,
-  subMonths,
   format,
-  startOfMonth,
-  endOfMonth,
-  eachDayOfInterval,
   addDays,
+  subYears,
+  addYears,
+  parseISO,
+  isEqual,
+  getDay,
+  startOfDay
 } from "date-fns";
 import { ja } from "date-fns/locale";
 import { getDayRecord, formatDate } from "../utils/habitStorage";
@@ -15,71 +16,57 @@ import { getDayRecord, formatDate } from "../utils/habitStorage";
 const FIXED_HABITS = ["瞑想", "読書"];
 
 const HabitContributionGraph = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [monthData, setMonthData] = useState([]);
+  const [yearData, setYearData] = useState([]);
+  const [currentYear, setCurrentYear] = useState(new Date("2025-04-01")); // 2025/04/01スタート
 
-  // 月のカレンダーデータを生成
+  // 1年分のデータを生成
   useEffect(() => {
-    const startDate = startOfMonth(currentDate);
-    const endDate = endOfMonth(currentDate);
-
-    // その月の日付すべてを取得
-    const daysInMonth = eachDayOfInterval({ start: startDate, end: endDate });
-
-    // 1日目が月曜日からスタートするように前月の日を追加
-    const dayOfWeek = startDate.getDay() || 7; // 日曜は0ではなく7として扱う
-    const mondayStart = dayOfWeek - 1;
-    let calendarDays = [...Array(mondayStart)].map((_, i) => {
-      const prevMonthDay = addDays(startDate, -mondayStart + i);
-      return {
-        date: formatDate(prevMonthDay),
-        isCurrentMonth: false,
-      };
-    });
-
-    // 当月の日を追加
-    calendarDays = [
-      ...calendarDays,
-      ...daysInMonth.map((day) => ({
-        date: formatDate(day),
-        isCurrentMonth: true,
-      })),
-    ];
-
-    // 最後の週を埋めるために次月の日を追加
-    const remainingDays = 7 - (calendarDays.length % 7);
-    if (remainingDays < 7) {
-      const lastDate = endDate;
-      calendarDays = [
-        ...calendarDays,
-        ...Array(remainingDays)
-          .fill()
-          .map((_, i) => {
-            const nextMonthDay = addDays(lastDate, i + 1);
-            return {
-              date: formatDate(nextMonthDay),
-              isCurrentMonth: false,
-            };
-          }),
-      ];
+    // 開始日を設定
+    const startDate = startOfDay(currentYear);
+    
+    // 53週分のデータを生成（年をまたぐ可能性を考慮して53週）
+    let allDays = [];
+    
+    // 最初の週の月曜日を見つける（開始日が月曜でない場合）
+    const dayOfWeek = getDay(startDate);
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // 月曜日は1、日曜日は0
+    const firstMonday = addDays(startDate, mondayOffset);
+    
+    // 1年分（53週）のデータを生成
+    for (let day = 0; day < 7; day++) {
+      for (let week = 0; week < 53; week++) {
+        const currentDate = addDays(firstMonday, week * 7 + day);
+        const dateString = formatDate(currentDate);
+        
+        // 1年分のデータのみを表示（開始日から365日分）
+        const isInTargetYear = currentDate >= startDate && 
+                              currentDate < addYears(startDate, 1);
+        
+        allDays.push({
+          date: dateString,
+          isInTargetYear,
+          day,
+          week
+        });
+      }
     }
+    
+    setYearData(allDays);
+  }, [currentYear]);
 
-    setMonthData(calendarDays);
-  }, [currentDate]);
-
-  // 前月へ
-  const goToPreviousMonth = () => {
-    setCurrentDate((prevDate) => subMonths(prevDate, 1));
+  // 前年へ
+  const goToPreviousYear = () => {
+    setCurrentYear((prevDate) => subYears(prevDate, 1));
   };
 
-  // 次月へ
-  const goToNextMonth = () => {
-    setCurrentDate((prevDate) => addMonths(prevDate, 1));
+  // 次年へ
+  const goToNextYear = () => {
+    setCurrentYear((prevDate) => addYears(prevDate, 1));
   };
 
-  // 今月へ
-  const goToCurrentMonth = () => {
-    setCurrentDate(new Date());
+  // 今年へ
+  const goToCurrentYear = () => {
+    setCurrentYear(new Date("2025-04-01"));
   };
 
   // 日付ごとの達成率を計算して色を決定
@@ -88,92 +75,120 @@ const HabitContributionGraph = () => {
     if (!dayRecord || !FIXED_HABITS.length) return "#ebedf0"; // デフォルト色（灰色）
 
     // 固定習慣のうち、完了したものをカウント
-    const completedCount = FIXED_HABITS.filter(
-      (habit) => dayRecord.completedHabits && dayRecord.completedHabits[habit]
-    ).length;
+    const meditationCompleted = dayRecord.completedHabits && dayRecord.completedHabits["瞑想"];
+    const readingCompleted = dayRecord.completedHabits && dayRecord.completedHabits["読書"];
 
-    // 完了数に応じて色を返す（GitHubの草の色に近づける）
-    if (completedCount === 0) return "#ebedf0"; // 0件：灰色
-    if (completedCount === 1) return "#9be9a8"; // 1件：薄緑
-    return "#39d353"; // 2件：濃い緑
+    // 完了状況に応じて色を返す
+    if (meditationCompleted && readingCompleted) return "#ffd700"; // 両方完了：金色
+    if (meditationCompleted) return "#9966cc"; // 瞑想のみ：紫色
+    if (readingCompleted) return "#90ee90"; // 読書のみ：黄緑
+    return "#ebedf0"; // 何も完了していない：灰色
   };
+  
+  // 現在の日付から1年前の日付を計算
+  const yearStartDate = format(currentYear, "yyyy/MM/dd", { locale: ja });
+  const yearEndDate = format(addYears(currentYear, 1), "yyyy/MM/dd", { locale: ja });
 
   return (
     <div className="contribution-graph">
       <div className="contribution-header">
-        <h2 className="month-title">
-          {format(currentDate, "yyyy年M月", { locale: ja })}
+        <h2 className="year-title">
+          {yearStartDate.replace('/','年').replace('/','月')} - {yearEndDate.replace('/','年').replace('/','月')}
         </h2>
-        <div className="month-navigation">
-          <button onClick={goToPreviousMonth} className="nav-button">
+        <div className="year-navigation">
+          <button onClick={goToPreviousYear} className="nav-button">
             ←
           </button>
-          <button onClick={goToCurrentMonth} className="nav-button current">
-            今月
+          <button onClick={goToCurrentYear} className="nav-button current">
+            初期年
           </button>
-          <button onClick={goToNextMonth} className="nav-button">
+          <button onClick={goToNextYear} className="nav-button">
             →
           </button>
         </div>
       </div>
 
-      {/* 曜日ヘッダー */}
-      <div className="weekday-header">
-        <div>月</div>
-        <div>火</div>
-        <div>水</div>
-        <div>木</div>
-        <div>金</div>
-        <div>土</div>
-        <div>日</div>
-      </div>
+            {/* 草グラフ（1年分） */}
+      <div className="contribution-container">
+        {/* 曜日ラベル（左側） */}
+        <div className="day-labels">
+          <div>月</div>
+          <div>水</div>
+          <div>金</div>
+        </div>
 
-      {/* 草グラフ */}
-      <div className="contribution-cells">
-        {monthData.map((day, index) => {
-          const isToday = day.date === formatDate(new Date());
-          const contributionColor = getContributionColor(day.date);
+        {/* グラフ本体 */}
+        <div className="graph-area">
+          {/* 月ラベル（上部） */}
+          <div className="month-labels">
+            <div>4月</div>
+            <div>5月</div>
+            <div>6月</div>
+            <div>7月</div>
+            <div>8月</div>
+            <div>9月</div>
+            <div>10月</div>
+            <div>11月</div>
+            <div>12月</div>
+            <div>1月</div>
+            <div>2月</div>
+            <div>3月</div>
+          </div>
 
-          return (
-            <div
-              key={day.date + index}
-              className={`contribution-cell ${
-                !day.isCurrentMonth ? "faded" : ""
-              } ${isToday ? "today" : ""}`}
-              style={{ backgroundColor: contributionColor }}
-              title={`${day.date}: ${
-                getDayRecord(day.date)
-                  ? FIXED_HABITS.filter(
-                      (habit) =>
-                        getDayRecord(day.date).completedHabits &&
-                        getDayRecord(day.date).completedHabits[habit]
-                    ).length
-                  : 0
-              }/${FIXED_HABITS.length} 完了`}
-            >
-              <div className="date-label">{new Date(day.date).getDate()}</div>
-            </div>
-          );
-        })}
+          {/* 草グラフ */}
+          <div className="contribution-cells year-view">
+            {yearData.map((day, index) => {
+              const isToday = day.date === formatDate(new Date());
+              const contributionColor = getContributionColor(day.date);
+
+              return (
+                <div
+                  key={day.date + index}
+                  className={`contribution-cell ${
+                    !day.isInTargetYear ? "faded" : ""
+                  } ${isToday ? "today" : ""}`}
+                  style={{
+                    backgroundColor: contributionColor,
+                    gridColumn: day.week + 1,
+                    gridRow: day.day + 1
+                  }}
+                  title={`${day.date}: ${
+                    getDayRecord(day.date) && getDayRecord(day.date).completedHabits
+                      ? (getDayRecord(day.date).completedHabits["瞑想"] ? "瞑想 " : "") + 
+                        (getDayRecord(day.date).completedHabits["読書"] ? "読書" : "")
+                      : "なし"
+                  }`}
+                >
+                  <div className="date-label">{new Date(day.date).getDate()}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* 凡例 */}
       <div className="contribution-legend">
         <span>レベル:</span>
-        <span>0件</span>
+        <span>なし</span>
         <div
           className="legend-cell"
           style={{ backgroundColor: "#ebedf0" }}
         ></div>
-        <span>1件</span>
+        <span>瞑想</span>
         <div
           className="legend-cell"
-          style={{ backgroundColor: "#9be9a8" }}
+          style={{ backgroundColor: "#9966cc" }}
         ></div>
-        <span>2件</span>
+        <span>読書</span>
         <div
           className="legend-cell"
-          style={{ backgroundColor: "#39d353" }}
+          style={{ backgroundColor: "#90ee90" }}
+        ></div>
+        <span>両方</span>
+        <div
+          className="legend-cell"
+          style={{ backgroundColor: "#ffd700" }}
         ></div>
       </div>
     </div>
