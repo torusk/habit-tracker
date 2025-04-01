@@ -1,13 +1,204 @@
+/* Tailwind の基本的なディレクティブ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 基本的なCSSスタイル */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f3f4f6;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+/* 基本的なスタイルを追加 */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.header {
+  background-color: #16a34a;
+  color: white;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: #16a34a;
+  color: white;
+  border: none;
+}
+
+.btn-secondary {
+  background-color: white;
+  color: #16a34a;
+  border: none;
+}
+
+.btn-tertiary {
+  background-color: #e5e7eb;
+  color: #1f2937;
+  border: none;
+}
+
+.card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.rounded {
+  border-radius: 0.25rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}
+
+.text-gray-600 {
+  color: #4b5563;
+}
+
+.text-green-600 {
+  color: #16a34a;
+}
+
+.bg-gray-100 {
+  background-color: #f3f4f6;
+}
+
+.bg-green-100 {
+  background-color: #dcfce7;
+}
+
+.border-b {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.shadow {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* レスポンシブなグリッド */
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .grid-cols-7 {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.progress-bar {
+  height: 1rem;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-value {
+  height: 100%;
+  background-color: #16a34a;
+}
+
+.footer {
+  background-color: #e5e7eb;
+  padding: 1rem;
+  text-align: center;
+  color: #4b5563;
+  font-size: 0.875rem;
 }
