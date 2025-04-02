@@ -5,12 +5,12 @@ import { getAuth } from "firebase/auth";
 
 // Firebaseの設定
 const firebaseConfig = {
-  apiKey: "AIzaSyBEd9J6buXqZTIwBc6qwNZvj7J1qEyiUBE",
-  authDomain: "three-habits-tracker.firebaseapp.com",
-  projectId: "three-habits-tracker",
-  storageBucket: "three-habits-tracker.appspot.com",
-  messagingSenderId: "878300262884",
-  appId: "1:878300262884:web:33b95427e2f1a65c4d17f1",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 // Firebase初期化
