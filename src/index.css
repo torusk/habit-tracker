@@ -39,6 +39,7 @@ code {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: visible;
 }
 
 .app-header {
@@ -290,12 +291,56 @@ code {
   text-align: start;
 }
 
+/* スマートフォンとタブレットでの月ラベルの最適化 */
+@media (max-width: 768px) {
+  .month-labels {
+    position: sticky;
+    top: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 1;
+    padding-bottom: 3px;
+    margin-bottom: 3px;
+    border-bottom: 1px solid #e1e4e8;
+  }
+}
+
 /* 草グラフ全体のコンテナ */
 .contribution-container {
   display: flex;
   margin-bottom: 16px;
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: visible;
+}
+
+/* 四半期ごとの表示スタイル */
+.contribution-grid-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 20px;
+  padding-top: 10px;
+}
+
+.quarter-section {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.quarter-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  color: #24292e;
+}
+
+.contribution-cells.quarter-view {
+  display: grid;
+  grid-template-columns: repeat(13, minmax(0, 1fr));
+  grid-template-rows: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+  width: 100%;
 }
 
 .weekday-header {
@@ -351,6 +396,29 @@ code {
 
 .date-label {
   display: none;
+}
+
+/* スマートフォンとタブレットでは重要な日付（1日・15日・月末）のラベルを表示 */
+@media (max-width: 768px) {
+  .contribution-cell[title*="/01:"] .date-label,
+  .contribution-cell[title*="/15:"] .date-label,
+  .contribution-cell[title*="/28:"] .date-label,
+  .contribution-cell[title*="/29:"] .date-label,
+  .contribution-cell[title*="/30:"] .date-label,
+  .contribution-cell[title*="/31:"] .date-label {
+    display: block;
+    font-size: 7px;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.6);
+    font-weight: bold;
+    line-height: 1;
+  }
+  
+  /* 重要な日付のセルを強調 */
+  .contribution-cell[title*="/01:"],
+  .contribution-cell[title*="/15:"] {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
 }
 
 .contribution-legend {
@@ -473,43 +541,58 @@ code {
     overflow-x: visible;
   }
   
-  .day-labels {
-    font-size: 9px;
-    gap: 28px;
-  }
-
-  .month-labels {
-    font-size: 9px;
-    margin-bottom: 6px;
+  /* 四半期表示用のスタイル調整 */
+  .contribution-cell {
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 3px;
   }
   
-  .contribution-cell,
-  .contribution-cells.year-view .contribution-cell {
-    width: 7px;
-    height: 7px;
+  .quarter-section {
+    margin-bottom: 20px;
+  }
+  
+  .quarter-title {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .contribution-grid-container {
+    gap: 15px;
+  }
+  
+  .contribution-cells.quarter-view {
+    gap: 4px;
+  }
+  
+  /* 曜日ラベルを非表示 */
+  .day-labels {
+    display: none;
+  }
+  
+  /* 月ラベルも非表示 */
+  .month-labels {
+    display: none;
   }
   
   .graph-area {
-    width: calc(100% - 20px);
-    overflow-x: hidden;
-  }
-  
-  .contribution-cells.year-view {
-    grid-template-columns: repeat(53, minmax(0, 7px));
-    grid-template-rows: repeat(7, minmax(0, 7px));
-    gap: 1px;
+    width: 100%;
     overflow-x: visible;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
   }
   
   .legend-cell {
-    width: 7px;
-    height: 7px;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
   }
   
   .contribution-legend {
-    gap: 5px;
+    gap: 8px;
     justify-content: center;
-    padding-top: 5px;
+    padding-top: 10px;
+    font-size: 12px;
   }
 }
 
@@ -518,7 +601,7 @@ code {
   .app-main {
     padding: 0.5rem;
     max-width: 100%;
-    overflow-x: hidden;
+    overflow-x: visible;
   }
 
   .app-header {
@@ -564,46 +647,65 @@ code {
     font-size: 11px;
   }
 
-  .contribution-cell,
-  .contribution-cells.year-view .contribution-cell {
-    width: 4px;
-    height: 4px;
-  }
-  
-  .graph-area {
-    width: calc(100% - 15px);
-    overflow-x: hidden;
+  /* 草のサイズを大きくする */
+  .contribution-cell {
+    width: 14px !important;
+    height: 14px !important;
+    border-radius: 2px;
   }
 
-  .contribution-cells.year-view {
-    grid-template-columns: repeat(53, minmax(0, 4px));
-    grid-template-rows: repeat(7, minmax(0, 4px));
-    gap: 1px;
-    overflow-x: visible;
+  /* 四半期表示用のスタイル調整 */
+  .quarter-section {
+    margin-bottom: 15px;
   }
   
+  .quarter-title {
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+  
+  .contribution-grid-container {
+    gap: 10px;
+  }
+  
+  .contribution-cells.quarter-view {
+    gap: 3px;
+  }
+  
+  /* 曜日ラベルを非表示 */
   .day-labels {
-    gap: 12px;
-    padding-top: 3px;
-    font-size: 7px;
+    display: none;
   }
   
+  /* 月ラベルも非表示 */
   .month-labels {
-    font-size: 6px;
-    margin-bottom: 3px;
+    display: none;
+  }
+  
+  /* グラフエリア調整 */
+  .graph-area {
+    width: 100%;
+    overflow-x: visible;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    display: block;
+  }
+  
+  .contribution-container {
+    overflow-x: visible;
   }
 
   .legend-cell {
-    width: 5px;
-    height: 5px;
+    width: 10px;
+    height: 10px;
   }
 
   .contribution-legend {
-    font-size: 8px;
+    font-size: 10px;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 3px;
-    margin-top: 10px;
+    gap: 5px;
+    margin-top: 15px;
   }
   
   .habit-items {

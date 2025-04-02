@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { isSameMonth } from "date-fns";
 import {
   format,
   addDays,
@@ -18,6 +19,8 @@ const HabitContributionGraph = () => {
   const [currentYear, setCurrentYear] = useState(new Date("2025-04-01")); // 2025/04/01スタート
   const [dayRecords, setDayRecords] = useState({});
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState('year'); // 'year' または 'month'
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // 1年分のデータを生成
   useEffect(() => {
@@ -207,7 +210,7 @@ const HabitContributionGraph = () => {
       </div>
 
       {/* 草グラフ（1年分） */}
-      <div className="contribution-container">
+      <div className="contribution-container" style={{ overflowX: 'scroll', position: 'relative', display: 'flex' }}>
         {/* 曜日ラベル（左側） */}
         <div className="day-labels">
           <div>月</div>
@@ -216,7 +219,7 @@ const HabitContributionGraph = () => {
         </div>
 
         {/* グラフ本体 */}
-        <div className="graph-area">
+        <div className="graph-area" style={{ width: '100%', minWidth: '650px', display: 'block' }}>
           {/* 月ラベル（上部） */}
           <div className="month-labels">
             <div>4月</div>
@@ -233,29 +236,135 @@ const HabitContributionGraph = () => {
             <div>3月</div>
           </div>
 
-          {/* 草グラフ */}
-          <div className="contribution-cells year-view">
-            {yearData.map((day, index) => {
-              const isToday = day.date === formatDate(new Date());
-              const contributionColor = getContributionColor(day.date);
+          {/* 草グラフ - 3ヶ月ごとに折り返し表示 */}
+          <div className="contribution-grid-container">
+            {/* 第1四半期 (4-6月) */}
+            <div className="quarter-section">
+              <h4 className="quarter-title">4月～6月</h4>
+              <div className="contribution-cells quarter-view">
+                {yearData
+                  .filter(day => {
+                    const date = new Date(day.date);
+                    const month = date.getMonth();
+                    // 4月(3)から6月(5)までの範囲
+                    return day.isInTargetYear && month >= 3 && month <= 5;
+                  })
+                  .map((day, index) => {
+                    const isToday = day.date === formatDate(new Date());
+                    const contributionColor = getContributionColor(day.date);
+                    return (
+                      <div
+                        key={day.date + index}
+                        className={`contribution-cell ${isToday ? "today" : ""}`}
+                        style={{
+                          backgroundColor: contributionColor,
+                          gridColumn: (day.week % 13) + 1,
+                          gridRow: day.day + 1
+                        }}
+                        title={`${day.date}: ${getCompletedHabits(day.date)}`}
+                      >
+                        <div className="date-label">{new Date(day.date).getDate()}</div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
 
-              return (
-                <div
-                  key={day.date + index}
-                  className={`contribution-cell ${
-                    !day.isInTargetYear ? "faded" : ""
-                  } ${isToday ? "today" : ""}`}
-                  style={{
-                    backgroundColor: contributionColor,
-                    gridColumn: day.week + 1,
-                    gridRow: day.day + 1
-                  }}
-                  title={`${day.date}: ${getCompletedHabits(day.date)}`}
-                >
-                  <div className="date-label">{new Date(day.date).getDate()}</div>
-                </div>
-              );
-            })}
+            {/* 第2四半期 (7-9月) */}
+            <div className="quarter-section">
+              <h4 className="quarter-title">7月～9月</h4>
+              <div className="contribution-cells quarter-view">
+                {yearData
+                  .filter(day => {
+                    const date = new Date(day.date);
+                    const month = date.getMonth();
+                    // 7月(6)から9月(8)までの範囲
+                    return day.isInTargetYear && month >= 6 && month <= 8;
+                  })
+                  .map((day, index) => {
+                    const isToday = day.date === formatDate(new Date());
+                    const contributionColor = getContributionColor(day.date);
+                    return (
+                      <div
+                        key={day.date + index}
+                        className={`contribution-cell ${isToday ? "today" : ""}`}
+                        style={{
+                          backgroundColor: contributionColor,
+                          gridColumn: (day.week % 13) + 1,
+                          gridRow: day.day + 1
+                        }}
+                        title={`${day.date}: ${getCompletedHabits(day.date)}`}
+                      >
+                        <div className="date-label">{new Date(day.date).getDate()}</div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
+            {/* 第3四半期 (10-12月) */}
+            <div className="quarter-section">
+              <h4 className="quarter-title">10月～12月</h4>
+              <div className="contribution-cells quarter-view">
+                {yearData
+                  .filter(day => {
+                    const date = new Date(day.date);
+                    const month = date.getMonth();
+                    // 10月(9)から12月(11)までの範囲
+                    return day.isInTargetYear && month >= 9 && month <= 11;
+                  })
+                  .map((day, index) => {
+                    const isToday = day.date === formatDate(new Date());
+                    const contributionColor = getContributionColor(day.date);
+                    return (
+                      <div
+                        key={day.date + index}
+                        className={`contribution-cell ${isToday ? "today" : ""}`}
+                        style={{
+                          backgroundColor: contributionColor,
+                          gridColumn: (day.week % 13) + 1,
+                          gridRow: day.day + 1
+                        }}
+                        title={`${day.date}: ${getCompletedHabits(day.date)}`}
+                      >
+                        <div className="date-label">{new Date(day.date).getDate()}</div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+
+            {/* 第4四半期 (1-3月) */}
+            <div className="quarter-section">
+              <h4 className="quarter-title">1月～3月</h4>
+              <div className="contribution-cells quarter-view">
+                {yearData
+                  .filter(day => {
+                    const date = new Date(day.date);
+                    const month = date.getMonth();
+                    // 1月(0)から3月(2)までの範囲
+                    return day.isInTargetYear && month >= 0 && month <= 2;
+                  })
+                  .map((day, index) => {
+                    const isToday = day.date === formatDate(new Date());
+                    const contributionColor = getContributionColor(day.date);
+                    return (
+                      <div
+                        key={day.date + index}
+                        className={`contribution-cell ${isToday ? "today" : ""}`}
+                        style={{
+                          backgroundColor: contributionColor,
+                          gridColumn: (day.week % 13) + 1,
+                          gridRow: day.day + 1
+                        }}
+                        title={`${day.date}: ${getCompletedHabits(day.date)}`}
+                      >
+                        <div className="date-label">{new Date(day.date).getDate()}</div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
           </div>
         </div>
       </div>

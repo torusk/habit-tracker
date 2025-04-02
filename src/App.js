@@ -75,7 +75,7 @@ function App() {
         <header className="app-header">
           <h1>習慣トラッカー</h1>
         </header>
-        <main className="app-main">
+        <main className="app-main" style={{ overflowX: 'visible' }}>
           <div className="loading">
             <p>読み込み中...</p>
           </div>
@@ -98,7 +98,7 @@ function App() {
         )}
       </header>
 
-      <main className="app-main">
+      <main className="app-main" style={{ overflowX: 'visible' }}>
         {user ? (
           <>
             <div className="graph-container">
