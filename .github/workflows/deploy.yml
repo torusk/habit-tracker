@@ -40,6 +40,14 @@ jobs:
           REACT_APP_FIREBASE_APP_ID: ${{ secrets.REACT_APP_FIREBASE_APP_ID }}
           CI: false # ESLintの警告をエラーとして扱わない
       
+      # デバッグ情報を表示
+      - name: Debug directory structure
+        run: |
+          echo "現在のディレクトリ構造:"
+          ls -la
+          echo "firebase.jsonの確認:"
+          cat firebase.json
+      
       # Firebaseへのデプロイ
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
@@ -48,3 +56,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           channelId: live
           projectId: jp-habit-tracker
+          entryPoint: '.' # リポジトリのルートディレクトリを指定
