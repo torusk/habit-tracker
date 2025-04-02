@@ -3,6 +3,7 @@ import {
   formatDate,
   getDayRecord,
   saveHabitCompletion,
+  getDayRecordSync
 } from "../utils/habitStorage";
 
 // 固定の習慣リスト
@@ -11,8 +12,36 @@ const FIXED_HABITS = ["瞑想", "学習", "運動"];
 const TodayCheckList = () => {
   const today = formatDate(new Date());
   const [todayRecord, setTodayRecord] = useState(
-    getDayRecord(today) || { completedHabits: {} }
+    { completedHabits: {} }
   );
+  const [loading, setLoading] = useState(true);
+
+  // 今日の記録を取得
+  useEffect(() => {
+    const fetchTodayRecord = async () => {
+      try {
+        // まずLocalStorageから同期的に取得して初期表示
+        const localRecord = getDayRecordSync(today);
+        if (localRecord) {
+          setTodayRecord(localRecord);
+        }
+        
+        // Firestoreから非同期で取得
+        const record = await getDayRecord(today);
+        if (record) {
+          setTodayRecord(record);
+        } else {
+          setTodayRecord({ completedHabits: {} });
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error('今日の記録の取得に失敗しました:', error);
+        setLoading(false);
+      }
+    };
+    
+    fetchTodayRecord();
+  }, [today]);
 
   // 日付が変わったら再読み込み
   useEffect(() => {
@@ -29,11 +58,11 @@ const TodayCheckList = () => {
   }, [today]);
 
   // 習慣の完了状態を切り替え
-  const toggleHabit = (habit) => {
-    const isCurrentlyCompleted = todayRecord.completedHabits[habit] || false;
-    const success = saveHabitCompletion(today, habit, !isCurrentlyCompleted);
-
-    if (success) {
+  const toggleHabit = async (habit) => {
+    try {
+      const isCurrentlyCompleted = todayRecord.completedHabits[habit] || false;
+      
+      // UI更新を先に行ってレスポンシブに
       setTodayRecord((prev) => ({
         ...prev,
         completedHabits: {
@@ -41,6 +70,23 @@ const TodayCheckList = () => {
           [habit]: !isCurrentlyCompleted,
         },
       }));
+      
+      // バックグラウンドで保存
+      const success = await saveHabitCompletion(today, habit, !isCurrentlyCompleted);
+      
+      if (!success) {
+        // 保存に失敗した場合は元に戻す
+        setTodayRecord((prev) => ({
+          ...prev,
+          completedHabits: {
+            ...prev.completedHabits,
+            [habit]: isCurrentlyCompleted,
+          },
+        }));
+        console.error('習慣の保存に失敗しました');
+      }
+    } catch (error) {
+      console.error('習慣の切り替えに失敗しました:', error);
     }
   };
 
@@ -66,9 +112,10 @@ const TodayCheckList = () => {
             <label className="habit-label">
               <input
                 type="checkbox"
-                checked={todayRecord.completedHabits[habit] || false}
+                checked={todayRecord.completedHabits && todayRecord.completedHabits[habit] || false}
                 onChange={() => toggleHabit(habit)}
                 className="habit-checkbox"
+                disabled={loading}
               />
               <span className="habit-name">{habit}</span>
             </label>
@@ -76,7 +123,7 @@ const TodayCheckList = () => {
         ))}
       </div>
       <div className="checklist-tips">
-        タップして代入し、チェックが反映されます。
+        {loading ? 'データ読み込み中...' : 'タップして習慣を記録、チェックが即座に反映されます。'}
       </div>
     </div>
   );

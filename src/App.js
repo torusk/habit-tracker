@@ -1,16 +1,39 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import HabitContributionGraph from "./components/HabitContributionGraph";
 import TodayCheckList from "./components/TodayCheckList";
-import { lockDayRecord, formatDate } from "./utils/habitStorage";
+import Login from "./components/Login";
+import { lockDayRecord, formatDate, migrateLocalStorageToFirestore } from "./utils/habitStorage";
+import { auth } from "./firebase/config";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [dataMigrated, setDataMigrated] = useState(false);
+
+  // 認証状態の監視
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setUser(user);
+      setLoading(false);
+
+      // ログイン時にLocalStorageのデータを移行（初回のみ）
+      if (user && !dataMigrated) {
+        await migrateLocalStorageToFirestore();
+        setDataMigrated(true);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [dataMigrated]);
+
   // 日付が変わった時に前日の記録をロック（編集不可に）
   useEffect(() => {
-    const checkAndLockPreviousDay = () => {
+    const checkAndLockPreviousDay = async () => {
       const yesterday = formatDate(
         new Date(new Date().setDate(new Date().getDate() - 1))
       );
-      lockDayRecord(yesterday);
+      await lockDayRecord(yesterday);
     };
 
     // 初回実行
@@ -36,19 +59,47 @@ function App() {
     return () => clearTimeout(timerId);
   }, []);
 
-  // URLから秘密キーを取得（簡易的なアクセス制限）
-  const urlParams = new URLSearchParams(window.location.search);
-  const secretKey = urlParams.get("key");
-  const hasAccess = !secretKey || secretKey === "kazuki"; // 'kazuki'を任意の秘密キーに変更
+  // ログアウト処理
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("ログアウトに失敗しました:", error);
+    }
+  };
+
+  // ローディング中
+  if (loading) {
+    return (
+      <div className="app-container">
+        <header className="app-header">
+          <h1>習慣トラッカー</h1>
+        </header>
+        <main className="app-main">
+          <div className="loading">
+            <p>読み込み中...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="app-container">
       <header className="app-header">
         <h1>習慣トラッカー</h1>
+        {user && (
+          <div className="user-info">
+            <span className="user-email">{user.email}</span>
+            <button onClick={handleLogout} className="logout-button">
+              ログアウト
+            </button>
+          </div>
+        )}
       </header>
 
       <main className="app-main">
-        {hasAccess ? (
+        {user ? (
           <>
             <div className="graph-container">
               <HabitContributionGraph />
@@ -58,9 +109,7 @@ function App() {
             </div>
           </>
         ) : (
-          <div className="access-denied">
-            <p>アクセス権限がありません。正しいURLをご利用ください。</p>
-          </div>
+          <Login />
         )}
       </main>
 

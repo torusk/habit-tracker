@@ -1,0 +1,25 @@
+{
+  "firestore": {
+    "rules": {
+      "version": "2",
+      "service": "cloud.firestore",
+      "match /databases/{database}/documents": {
+        "match /users/{userId}/records/{dateId}": {
+          "allow read, write: if request.auth != null && request.auth.uid == userId;",
+          "allow delete: if request.auth != null && request.auth.uid == userId;"
+        }
+      }
+    }
+  },
+  "storage": {
+    "rules": {
+      "version": "2",
+      "service": "firebase.storage",
+      "match /b/{bucket}/o": {
+        "match /{allPaths=**}": {
+          "allow read, write: if request.auth != null && request.auth.uid == userId;"
+        }
+      }
+    }
+  }
+}
