@@ -1,27 +1,17 @@
 // Firebase設定
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
-// Firebaseの設定（環境変数から取得）
+// Firebaseの設定
 const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "AIzaSyBsalvDzPH7abcdefghijklmnopqrstuvwxyz",
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "habit-tracker-xxxxx.firebaseapp.com",
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "habit-tracker-xxxxx",
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET || "habit-tracker-xxxxx.appspot.com",
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "123456789012",
-  appId: process.env.REACT_APP_FIREBASE_APP_ID || "1:123456789012:web:abcdef1234567890"
+  apiKey: "AIzaSyBEd9J6buXqZTIwBc6qwNZvj7J1qEyiUBE",
+  authDomain: "three-habits-tracker.firebaseapp.com",
+  projectId: "three-habits-tracker",
+  storageBucket: "three-habits-tracker.appspot.com",
+  messagingSenderId: "878300262884",
+  appId: "1:878300262884:web:33b95427e2f1a65c4d17f1",
 };
-
-// 開発用メッセージ
-if (process.env.NODE_ENV === 'development') {
-  console.log('Firebase Config: ', firebaseConfig);
-  
-  // 環境変数が設定されているか確認
-  if (firebaseConfig.apiKey === "AIzaSyBsalvDzPH7abcdefghijklmnopqrstuvwxyz") {
-    console.warn('Firebase設定が完了していません。.envファイルを設定してください。');
-  }
-}
 
 // Firebase初期化
 const app = initializeApp(firebaseConfig);
