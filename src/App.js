@@ -101,11 +101,11 @@ function App() {
       <main className="app-main" style={{ overflowX: 'visible' }}>
         {user ? (
           <>
-            <div className="graph-container">
-              <HabitContributionGraph />
-            </div>
             <div className="checklist-container">
               <TodayCheckList />
+            </div>
+            <div className="graph-container">
+              <HabitContributionGraph />
             </div>
           </>
         ) : (

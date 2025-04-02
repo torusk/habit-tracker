@@ -317,21 +317,21 @@ code {
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 20px;
-  padding-top: 10px;
+  gap: 10px;
+  padding-top: 5px;
 }
 
 .quarter-section {
   background-color: rgba(255, 255, 255, 0.5);
   border-radius: 6px;
-  padding: 10px;
+  padding: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .quarter-title {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  margin: 0 0 10px 0;
+  margin: 0 0 5px 0;
   color: #24292e;
 }
 
@@ -339,7 +339,7 @@ code {
   display: grid;
   grid-template-columns: repeat(13, minmax(0, 1fr));
   grid-template-rows: repeat(7, minmax(0, 1fr));
-  gap: 2px;
+  gap: 1px;
   width: 100%;
 }
 
@@ -606,70 +606,79 @@ code {
 
   .app-header {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
-    padding: 0.75rem;
+    padding: 0.6rem;
   }
 
   .user-info {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
   }
 
   .user-email {
     margin-right: 0;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
   }
 
   .contribution-graph {
     padding: 8px;
     width: calc(100% - 16px);
+    margin-bottom: 10px;
   }
   
   .today-checklist {
-    padding: 10px;
-    margin-top: 5px;
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+
+  .checklist-header {
+    font-size: 0.95rem;
+    margin: 0 0 10px 0;
   }
 
   .contribution-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 6px;
+    margin-bottom: 10px;
   }
 
   .year-title {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   .nav-button {
-    padding: 2px 6px;
-    font-size: 11px;
+    padding: 2px 5px;
+    font-size: 10px;
   }
 
-  /* 草のサイズを大きくする */
+  /* 草のサイズを微調整 */
   .contribution-cell {
-    width: 14px !important;
-    height: 14px !important;
+    width: 12px !important;
+    height: 12px !important;
     border-radius: 2px;
   }
 
   /* 四半期表示用のスタイル調整 */
   .quarter-section {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    padding: 5px;
   }
   
   .quarter-title {
-    font-size: 0.85rem;
-    margin-bottom: 8px;
+    font-size: 0.8rem;
+    margin-bottom: 3px;
   }
   
   .contribution-grid-container {
-    gap: 10px;
+    gap: 8px;
+    padding-top: 3px;
   }
   
   .contribution-cells.quarter-view {
-    gap: 3px;
+    gap: 1px;
   }
   
   /* 曜日ラベルを非表示 */
@@ -686,42 +695,49 @@ code {
   .graph-area {
     width: 100%;
     overflow-x: visible;
-    margin-bottom: 10px;
-    padding-bottom: 10px;
-    display: block;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
   }
   
   .contribution-container {
     overflow-x: visible;
+    margin-bottom: 8px;
   }
 
   .legend-cell {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
   }
 
   .contribution-legend {
-    font-size: 10px;
+    font-size: 9px;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 5px;
-    margin-top: 15px;
+    gap: 4px;
+    margin-top: 8px;
+    padding: 3px 0;
   }
   
   .habit-items {
-    flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
+    flex-direction: row;
+    gap: 15px;
+    justify-content: center;
   }
   
   .habit-checkbox {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    margin-right: 6px;
   }
   
   .habit-name {
-    font-size: 16px;
+    font-size: 14px;
+  }
+  
+  /* フッターを小さくする */
+  .app-footer {
+    padding: 0.6rem;
+    font-size: 0.7rem;
   }
 }
 
