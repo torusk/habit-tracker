@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20' # Node.js 20に更新（Firebase CLI v14に対応）
           cache: 'npm'
           
       - name: Install dependencies
@@ -40,15 +40,7 @@ jobs:
           REACT_APP_FIREBASE_APP_ID: ${{ secrets.REACT_APP_FIREBASE_APP_ID }}
           CI: false # ESLintの警告をエラーとして扱わない
       
-      # デバッグ情報を表示
-      - name: Debug directory structure
-        run: |
-          echo "現在のディレクトリ構造:"
-          ls -la
-          echo "firebase.jsonの確認:"
-          cat firebase.json
-      
-      # Firebaseへのデプロイ
+      # Firebaseへのデプロイ（既存のアクションを使用）
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -56,4 +48,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           channelId: live
           projectId: jp-habit-tracker
-          entryPoint: '.' # リポジトリのルートディレクトリを指定
+          nodeVersion: '20'
