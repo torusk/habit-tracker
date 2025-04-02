@@ -112,7 +112,7 @@ const TodayCheckList = () => {
             <label className="habit-label">
               <input
                 type="checkbox"
-                checked={todayRecord.completedHabits && todayRecord.completedHabits[habit] || false}
+                checked={todayRecord.completedHabits && todayRecord.completedHabits[habit] ? true : false}
                 onChange={() => toggleHabit(habit)}
                 className="habit-checkbox"
                 disabled={loading}

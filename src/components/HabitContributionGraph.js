@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { isSameMonth } from "date-fns";
 import {
   format,
   addDays,
@@ -19,8 +18,6 @@ const HabitContributionGraph = () => {
   const [currentYear, setCurrentYear] = useState(new Date("2025-04-01")); // 2025/04/01スタート
   const [dayRecords, setDayRecords] = useState({});
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState('year'); // 'year' または 'month'
-  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // 1年分のデータを生成
   useEffect(() => {
@@ -171,9 +168,9 @@ const HabitContributionGraph = () => {
       if (!localRecord || !localRecord.completedHabits) return "なし";
       
       return (
-        (localRecord.completedHabits["瞑想"] ? "瞑想 " : "") + 
+        ((localRecord.completedHabits["瞑想"] ? "瞑想 " : "") + 
         (localRecord.completedHabits["学習"] ? "学習 " : "") +
-        (localRecord.completedHabits["運動"] ? "運動" : "") || "なし"
+        (localRecord.completedHabits["運動"] ? "運動" : "")) || "なし"
       );
     }
     
